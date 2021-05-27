@@ -1,6 +1,6 @@
 # Copyright (c) 2021 Oracle and/or its affiliates.
 
-name: 'License checker'
+name: 'License file checker'
 description: 'Check the licenses found.'
 inputs:
   licenses_file:
