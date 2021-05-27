@@ -1,6 +1,5 @@
 # Copyright (c) 2021 Oracle and/or its affiliates.
 
-# action.yml
 name: 'License checker'
 description: 'Check the licenses found.'
 inputs:
