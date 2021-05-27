@@ -1,0 +1,18 @@
+# Copyright (c) 2021 Oracle and/or its affiliates.
+
+# action.yml
+name: 'License checker'
+description: 'Check the licenses found.'
+inputs:
+  licenses_file:
+    description: 'The JSON licenses file to examine.'
+    required: false
+    default: 'licenses.json'
+outputs:
+  unapproved_licenses:
+    description: '(bool) Whether or not unapproved licenses were found.'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.license_file }}
