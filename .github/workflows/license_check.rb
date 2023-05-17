@@ -1,4 +1,6 @@
 # Copyright (c) 2021 Oracle and/or its affiliates.
+# Updated 2023-05-17 by Brett Terpstra
+# - Removes deprecated ::set-output
 
 require 'json'
 
@@ -24,7 +26,7 @@ end
 
 if file_data.length <= 0
   puts "WARNING - no data read (0 byte JSON file)."
-  puts "::set-output name=unapproved_licenses::false"
+  ENV['GITHUB_OUTPUT'] << "name=unapproved_licenses::false\n"
   exit(0)
 end
 
@@ -48,8 +50,8 @@ end
 
 if unapproved_licenses.count > 0
   puts "ERROR - found some licenses that require further inspection:\n#{unapproved_licenses}"
-  puts "::set-output name=unapproved_licenses::true"
+  ENV['GITHUB_OUTPUT'] << "name=unapproved_licenses::true\n"
 else
   puts "All licenses found were approved for use."
-  puts "::set-output name=unapproved_licenses::false"
+  ENV['GITHUB_OUTPUT'] << "name=unapproved_licenses::false\n"
 end
