@@ -3,8 +3,10 @@
 # - Removes deprecated ::set-output
 
 require 'json'
+require 'shellwords'
 
 file_name = 'licenses.json'
+output = []
 
 if ARGV.length > 0
   file_name = ARGV[0]
@@ -26,7 +28,7 @@ end
 
 if file_data.length <= 0
   puts "WARNING - no data read (0 byte JSON file)."
-  ENV['GITHUB_OUTPUT'] = "#{ENV['GITHUB_OUTPUT']}\nname=unapproved_licenses::false"
+  output << "name=unapproved_licenses::false"
   exit(0)
 end
 
@@ -50,8 +52,10 @@ end
 
 if unapproved_licenses.count > 0
   puts "ERROR - found some licenses that require further inspection:\n#{unapproved_licenses}"
-  ENV['GITHUB_OUTPUT'] = "#{ENV['GITHUB_OUTPUT']}\nname=unapproved_licenses::true"
+  output << "name=unapproved_licenses::true"
 else
   puts "All licenses found were approved for use."
-  ENV['GITHUB_OUTPUT'] = "#{ENV['GITHUB_OUTPUT']}\nname=unapproved_licenses::false"
+  output << "name=unapproved_licenses::false"
 end
+
+`echo #{Shellwords.escape(output.join("\n"))} >> GITHUB_OUTPUT`
