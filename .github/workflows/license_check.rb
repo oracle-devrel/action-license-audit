@@ -58,4 +58,4 @@ else
   output << "name=unapproved_licenses::false"
 end
 
-`echo #{Shellwords.escape(output.join("\n"))} >> GITHUB_OUTPUT`
+exec "echo #{Shellwords.escape(output.join("\n"))} >> GITHUB_OUTPUT"
