@@ -27,7 +27,7 @@ if file_data.length <= 0
 end
 
 json_data = JSON.parse(file_data)
-pp json_data
+
 unapproved_licenses = {}
 
 json_data['files'].each do |f|
