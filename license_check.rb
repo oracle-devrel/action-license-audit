@@ -31,7 +31,7 @@ pp json_data
 unapproved_licenses = {}
 
 json_data['files'].each do |f|
-  next unless f['license_policy'].count.positive?
+  # next unless f['license_policy'].count.positive?
 
   next if f['license_policy']['label'] == 'Approved License'
 
