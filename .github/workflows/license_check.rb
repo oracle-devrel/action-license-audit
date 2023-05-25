@@ -8,28 +8,21 @@ require 'shellwords'
 file_name = 'licenses.json'
 output = []
 
-if ARGV.length > 0
-  file_name = ARGV[0]
-end
+file_name = ARGV[0] unless ARGV.empty?
 
-if ENV.include?('INPUT_LICENSES_FILE') && ENV['INPUT_LICENSES_FILE'].to_s.length > 0
-  file_name = ENV['INPUT_LICENSES_FILE']
-end
+file_name = ENV['INPUT_LICENSES_FILE'] if ENV.include?('INPUT_LICENSES_FILE') && !ENV['INPUT_LICENSES_FILE'].empty?
 
-if !File.exist?(file_name)
+unless File.exist?(file_name)
   puts "ERROR - invalid (missing) file name given: #{file_name}"
   exit(1)
 end
 
-file_data = ''
-open(file_name) do |f|
-  file_data += f.read
-end
+file_data = IO.read(file_name)
 
 if file_data.length <= 0
-  puts "WARNING - no data read (0 byte JSON file)."
-  output << "name=unapproved_licenses::false"
-  exit(0)
+  puts 'WARNING - no data read (0 byte JSON file).'
+  output << 'unapproved_licenses=false'
+  Process.exit 0
 end
 
 json_data = JSON.parse(file_data)
@@ -37,25 +30,21 @@ json_data = JSON.parse(file_data)
 unapproved_licenses = {}
 
 json_data['files'].each do |f|
-  if f['license_policy'].count <= 0
-    f['licenses'].each do |l|
-      if !unapproved_licenses.include?(l['key'])
-        unapproved_licenses[l['key']] = []
-      end
-      
-      if !unapproved_licenses[l['key']].include?(f['path'])
-        unapproved_licenses[l['key']] << f['path']
-      end
-    end
+  next unless f['license_policy'].count.positive?
+
+  f['licenses'].each do |l|
+    unapproved_licenses[l['key']] = [] unless unapproved_licenses.include?(l['key'])
+
+    unapproved_licenses[l['key']] << f['path'] unless unapproved_licenses[l['key']].include?(f['path'])
   end
 end
 
-if unapproved_licenses.count > 0
+if unapproved_licenses.count.positive?
   puts "ERROR - found some licenses that require further inspection:\n#{unapproved_licenses}"
-  output << "name=unapproved_licenses::true"
+  output << 'unapproved_licenses=true'
 else
-  puts "All licenses found were approved for use."
-  output << "name=unapproved_licenses::false"
+  puts 'All licenses found were approved for use.'
+  output << 'unapproved_licenses=false'
 end
 
-exec "echo #{Shellwords.escape(output.join("\n"))} >> GITHUB_OUTPUT"
+`echo #{Shellwords.escape(output.join("\n"))} >> $GITHUB_OUTPUT`
