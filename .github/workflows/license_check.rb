@@ -4,6 +4,7 @@
 
 require 'json'
 require 'shellwords'
+require 'pp'
 
 file_name = 'licenses.json'
 output = []
@@ -26,6 +27,7 @@ if file_data.length <= 0
 end
 
 json_data = JSON.parse(file_data)
+pp json_data
 
 unapproved_licenses = {}
 
@@ -33,6 +35,9 @@ json_data['files'].each do |f|
   next unless f['license_policy'].count.positive?
 
   f['licenses'].each do |l|
+    ok = %w[unknown-license-reference warranty-disclaimer]
+    next if ok.include?(l['key'])
+
     unapproved_licenses[l['key']] = [] unless unapproved_licenses.include?(l['key'])
 
     unapproved_licenses[l['key']] << f['path'] unless unapproved_licenses[l['key']].include?(f['path'])
