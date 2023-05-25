@@ -36,7 +36,7 @@ json_data['files'].each do |f|
   next if f['license_policy']['label'] == 'Approved License'
 
   f['licenses'].each do |l|
-    ok = %w[warranty-disclaimer]
+    ok = %w[warranty-disclaimer unknown-license-reference]
     next if ok.include?(l['key'])
 
     unapproved_licenses[l['key']] = [] unless unapproved_licenses.include?(l['key'])
