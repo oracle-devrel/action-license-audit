@@ -47,4 +47,4 @@ else
   output << 'unapproved_licenses=false'
 end
 
-`echo #{Shellwords.escape(output.join("\n"))} >> $GITHUB_OUTPUT`
+`echo #{Shellwords.escape(output.join("\n"))} >> "$GITHUB_OUTPUT"`
